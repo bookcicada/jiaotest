@@ -1,0 +1,41 @@
+spring:
+  application:
+    name: micr-dataservice
+  #数据源
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/ylb?useUnicode=true&characterEncoding=UTF-8&serverTimezone=GMT%2B8
+    username: root
+    password: 123
+    #redis
+  redis:
+    host: localhost
+    port: 6379
+#mybatis
+mybatis:
+  mapper-locations: classpath:/mappers/**/*.xml
+  configuration:
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+
+#dubbo
+dubbo:
+  registry:
+    address: zookeeper://localhost:2181
+  scan:
+    base-packages: com.jiao.service
+  provider:
+    timeout: 10000
+    retries: 0
+
+jdwx:
+  sms:
+    url: https://wx.jdcloud.com/market/datas/5/10665
+    content: 【盈利宝】您的注册码是%s,请勿泄漏
+    appkey: 3680fa919b771148da626bbcbd459475
+  realname:
+    url: https://way.jd.com/youhuoBeijing/test
+    appkey: 3680fa919b771148da626bbcbd459475
+
+
+mima:
+  salt: jiaoaaa

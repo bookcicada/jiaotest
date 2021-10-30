@@ -1,0 +1,21 @@
+spring:
+  application:
+    name: micr-web
+  thymeleaf: false
+server:
+  port: 8000
+  servlet:
+    context-path: /ylb
+dubbo:
+  registry:
+    address: zookeeper://localhost:2181
+  scan:
+    base-packages: com.jiao.micrweb
+  consumer:
+    check: false
+    timeout: 20000
+    retries: 0
+#访问的支付服务块钱的接口
+micrPay:
+  kqUrl: http://localhost:9000/pay/kq/recvKqRequestForWeb
+  kqOrderUrl: http://localhost:9000/pay/kq/queryOrderForWeb

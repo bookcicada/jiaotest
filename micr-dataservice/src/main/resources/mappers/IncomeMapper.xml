@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jiao.mapper.IncomeMapper">
+    <resultMap id="BaseResultMap" type="com.jiao.model.Income">
+        <id column="id" jdbcType="INTEGER" property="id"/>
+        <result column="uid" jdbcType="INTEGER" property="uid"/>
+        <result column="loan_id" jdbcType="INTEGER" property="loanId"/>
+        <result column="bid_id" jdbcType="INTEGER" property="bidId"/>
+        <result column="bid_money" jdbcType="DECIMAL" property="bidMoney"/>
+        <result column="income_date" jdbcType="DATE" property="incomeDate"/>
+        <result column="income_money" jdbcType="DECIMAL" property="incomeMoney"/>
+        <result column="income_status" jdbcType="INTEGER" property="incomeStatus"/>
+    </resultMap>
+    <resultMap id="userInomeMap" type="com.jiao.model.exit.UserIncome">
+        <result column="product_name" property="productName"></result>
+        <result column="bid_money" jdbcType="DECIMAL" property="bidMoney"/>
+        <result column="income_date" jdbcType="DATE" property="incomeDate"/>
+        <result column="income_money" jdbcType="DECIMAL" property="incomeMoney"/>
+        <result column="income_status" jdbcType="INTEGER" property="incomeStatus"/>
+    </resultMap>
+    <sql id="Base_Column_List">
+    id, uid, loan_id, bid_id, bid_money, income_date, income_money, income_status
+  </sql>
+    <update id="updateStatusBack">
+        update b_income_record set income_status=1
+        where id=#{id}
+    </update>
+
+    <select id="selectIncomeByUID" resultMap="userInomeMap">
+    select income_money,income_date,income_status,product_name
+    from b_income_record income left join b_product_info product on
+    income.loan_id=product.id
+    where income.uid=#{uid}
+    order by income.id desc
+    limit #{pageNo},#{pageSize}
+  </select>
+    <select id="selectIncomeCount" resultType="int">
+        select count(id)
+        from b_income_record
+        where uid=#{uid}
+    </select>
+    <select id="selectExipreIncome" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"></include>
+        from b_income_record
+        where income_status=0 and income_date=Date_sub(curdate(),interval 1 day )
+        order by id
+    </select>
+    <!--添加收益记录-->
+    <insert id="insertIncome">
+        insert into b_income_record(uid, loan_id, bid_id, bid_money, income_date, income_money, income_status) values (#{uid},#{loanId},#{bidId},#{bidMoney},#{incomeDate},#{incomeMoney},#{incomeStatus})
+    </insert>
+</mapper>

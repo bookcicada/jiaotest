@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jiao.mapper.ProductMapper">
+    <resultMap id="BaseResultMap" type="com.jiao.model.Product">
+        <id column="id" jdbcType="INTEGER" property="id"/>
+        <result column="product_name" jdbcType="VARCHAR" property="productName"/>
+        <result column="rate" jdbcType="DECIMAL" property="rate"/>
+        <result column="cycle" jdbcType="INTEGER" property="cycle"/>
+        <result column="release_time" jdbcType="DATE" property="releaseTime"/>
+        <result column="product_type" jdbcType="INTEGER" property="productType"/>
+        <result column="product_no" jdbcType="VARCHAR" property="productNo"/>
+        <result column="product_money" jdbcType="DECIMAL" property="productMoney"/>
+        <result column="left_product_money" jdbcType="DECIMAL" property="leftProductMoney"/>
+        <result column="bid_min_limit" jdbcType="DECIMAL" property="bidMinLimit"/>
+        <result column="bid_max_limit" jdbcType="DECIMAL" property="bidMaxLimit"/>
+        <result column="product_status" jdbcType="INTEGER" property="productStatus"/>
+        <result column="product_full_time" jdbcType="TIMESTAMP" property="productFullTime"/>
+        <result column="product_desc" jdbcType="VARCHAR" property="productDesc"/>
+        <result column="version" jdbcType="INTEGER" property="version"/>
+    </resultMap>
+    <sql id="Base_Column_List">
+    id, product_name, rate, cycle, release_time, product_type, product_no, product_money,
+    left_product_money, bid_min_limit, bid_max_limit, product_status, product_full_time,
+    product_desc, version
+  </sql>
+
+    <select id="selectAvgRate" resultType="java.math.BigDecimal">
+        select round(avg(rate),2) as avgRate
+        from b_product_info
+    </select>
+    <select id="selectPage" resultMap="BaseResultMap">
+        SELECT
+        <include refid="Base_Column_List"></include>
+        FROM b_product_info
+        where product_type=#{productType}
+        ORDER BY rate desc
+        LIMIT #{offSet},#{rows}
+    </select>
+    <select id="selectRecordsProductType" resultType="java.lang.Integer">
+            select count(id) as ct from b_product_info where product_type = #{ptype}
+    </select>
+    <select id="selectProductById" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"></include>
+        from b_product_info
+        where id=#{id}
+    </select>
+    <!--昨天满标的产品-->
+    <select id="selectBeforeManBiaoProduct" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"></include>
+        from b_product_info
+        where product_status=1
+        and product_full_time between #{beginTime} and #{endTime}
+        order by id
+    </select>
+
+    <update id="updateLeftMoney">
+update b_product_info set left_product_money=left_product_money-#{bidMoney}
+where id=#{productId} and (left_product_money-#{bidMoney}>0)
+    </update>
+    <update id="updateStatusAndFullTime">
+        update b_product_info set  product_status=1, product_full_time=now()
+        where id=#{productId}
+    </update>
+    <update id="updateStatus">
+        update b_product_info set product_status=#{statusIncome}
+        where id=#{id}
+    </update>
+</mapper>

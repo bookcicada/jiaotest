@@ -1,0 +1,18 @@
+
+server:
+  port: 9000
+  servlet:
+    context-path: /pay
+spring:
+  application:
+    name: micr-pay
+  thymeleaf:
+    cache: false
+dubbo:
+  consumer:
+    timeout: 50000
+    check: false
+  registry:
+    address: zookeeper://localhost:2181
+  scan:
+    base-packages: com.jiao

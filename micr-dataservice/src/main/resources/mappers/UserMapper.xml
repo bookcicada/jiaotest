@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jiao.mapper.UserMapper">
+    <resultMap id="BaseResultMap" type="com.jiao.model.User">
+        <id column="id" jdbcType="INTEGER" property="id"/>
+        <result column="phone" jdbcType="VARCHAR" property="phone"/>
+        <result column="login_password" jdbcType="VARCHAR" property="loginPassword"/>
+        <result column="name" jdbcType="VARCHAR" property="name"/>
+        <result column="id_card" jdbcType="VARCHAR" property="idCard"/>
+        <result column="add_time" jdbcType="TIMESTAMP" property="addTime"/>
+        <result column="last_login_time" jdbcType="TIMESTAMP" property="lastLoginTime"/>
+        <result column="header_image" jdbcType="VARCHAR" property="headerImage"/>
+    </resultMap>
+    <sql id="Base_Column_List">
+    id, phone, login_password, name, id_card, add_time, last_login_time, header_image
+  </sql>
+    <insert id="insertUserReturnId">
+        <selectKey resultType="int" keyProperty="id" keyColumn="newID" order="AFTER">
+            select last_insert_id() as newID
+        </selectKey>
+        insert into u_user (phone, login_password,add_time) values (#{phone},#{loginPassword},#{addTime})
+    </insert>
+    <update id="updateUserByPhone">
+        update u_user set id_card=#{idCard},name=#{name}
+        where phone=#{phone}
+    </update>
+    <update id="updateLoginTime">
+        update u_user set last_login_time=#{loginDate}
+        where id=#{id}
+    </update>
+    <select id="selectRegisterUsers" resultType="int">
+  select count(phone) as registerUsers from u_user
+</select>
+    <select id="selectUserByPhone" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"></include>
+        from u_user
+        where phone=#{phone}
+    </select>
+    <select id="selectUserLogin" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"></include>
+        from u_user
+        where phone=#{phone} and login_password=#{pwd}
+    </select>
+</mapper>

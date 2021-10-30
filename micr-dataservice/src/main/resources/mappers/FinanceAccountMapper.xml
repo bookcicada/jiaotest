@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jiao.mapper.FinanceAccountMapper">
+    <resultMap id="BaseResultMap" type="com.jiao.model.FinanceAccount">
+        <id column="id" jdbcType="INTEGER" property="id"/>
+        <result column="uid" jdbcType="INTEGER" property="uid"/>
+        <result column="available_money" jdbcType="DECIMAL" property="availableMoney"/>
+    </resultMap>
+    <sql id="Base_Column_List">
+    id, uid, available_money
+  </sql>
+
+    <select id="selectByUid" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"></include>
+        from u_finance_account
+        where uid=#{uid}
+    </select>
+    <select id="selectUidForUpdate" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"></include>
+        from u_finance_account
+        where uid=#{userId} for update
+    </select>
+
+    <insert id="insertAccount">
+    insert into u_finance_account(uid, available_money) values (#{uid},#{availableMoney})
+  </insert>
+    <update id="reduceAccountavailable">
+update u_finance_account set available_money=available_money-#{bidMoney}
+where uid=#{id} and (available_money-#{bidMoney}>=0)
+  </update>
+    <update id="updateMoneyIncomeBack">
+update u_finance_account set available_money =available_money+#{bidMoney}+#{incomeMoney}
+where uid=#{uid}
+    </update>
+    <update id="updateMoneyRecharge">
+        update u_finance_account set
+        available_money=available_money+#{rechargeMoney}
+        where uid=#{uid}
+    </update>
+</mapper>
